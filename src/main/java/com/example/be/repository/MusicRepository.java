@@ -37,4 +37,9 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
                         " limit 8 ", nativeQuery = true)
         List<Object[]> getNewMusic();
 
+        @Query(value = " SELECT m.id, m.music_name, m.img , u.stage_name , m.duration " +
+                        " FROM music m "+
+                        " join user u on u.id = m.artist_id ", nativeQuery = true)
+        List<Object[]> getSearchMusic();
+
 }

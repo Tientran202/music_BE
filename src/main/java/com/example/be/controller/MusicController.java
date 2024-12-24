@@ -11,10 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.be.dto.response.IndexMusicRespone;
 import com.example.be.dto.response.home.NewMusicResponse;
+import com.example.be.dto.response.search.SearchMusicResponse;
 import com.example.be.model.Music;
 import com.example.be.repository.MusicRepository;
 import com.example.be.service.MusicService;
@@ -62,6 +64,11 @@ public class MusicController {
     public ResponseEntity<?> getNewMusic() {
         List<NewMusicResponse> NewMusic = musicService.getNewMusic();
         return ResponseEntity.ok(NewMusic);
+    }
+
+    @GetMapping("/searchMusic")
+    public List<SearchMusicResponse> searchMusic(@RequestParam String keyword) {
+        return musicService.searchMusic(keyword);
     }
 
 }

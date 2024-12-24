@@ -37,14 +37,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
                         " where u.role = 'user' ", nativeQuery = true)
         List<Object[]> findAllUser();
 
-        @Query(value = " select a.id , a.stage_name , a.avatar "+
-        " from user u "+
-        " join listening_history l on l.user_id = u.id "+
-        " join music m on l.music_id= m.id "+
-        " join user a on a.id = m.artist_id "+
-        " where u.account= :artistId "+
-        " limit 8 ", nativeQuery = true)
+        @Query(value = " select a.id , a.stage_name , a.avatar " +
+                        " from user u " +
+                        " join listening_history l on l.user_id = u.id " +
+                        " join music m on l.music_id= m.id " +
+                        " join user a on a.id = m.artist_id " +
+                        " where u.account= :artistId " +
+                        " limit 8 ", nativeQuery = true)
         List<Object[]> getPopularArtist(@Param("artistId") int artistId);
 
+        @Query(value = " select a.id , a.stage_name , a.avatar " +
+                        " from user a " +
+                        " where a.role= 'artist' ",nativeQuery = true)
+        List<Object[]> getSearchArtist();
 
 }
