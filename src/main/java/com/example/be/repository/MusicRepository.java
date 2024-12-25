@@ -38,8 +38,14 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
         List<Object[]> getNewMusic();
 
         @Query(value = " SELECT m.id, m.music_name, m.img , u.stage_name , m.duration " +
-                        " FROM music m "+
+                        " FROM music m " +
                         " join user u on u.id = m.artist_id ", nativeQuery = true)
         List<Object[]> getSearchMusic();
+
+        @Query(value = " select m.id , m.music_name , m.img , m.duration " +
+                        " from music m " +
+                        " where m.album_id = :albumId ", nativeQuery = true)
+        List<Object[]> getMusicByAlbum(@Param("albumId") int albumId);
+        
 
 }

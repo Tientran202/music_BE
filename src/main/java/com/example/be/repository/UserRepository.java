@@ -48,7 +48,34 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
         @Query(value = " select a.id , a.stage_name , a.avatar " +
                         " from user a " +
-                        " where a.role= 'artist' ",nativeQuery = true)
+                        " where a.role= 'artist' ", nativeQuery = true)
         List<Object[]> getSearchArtist();
+
+        @Query(value = " SELECT " +
+                        " u.name AS artist_name, " +
+                        " u.avatar AS artist_image, " +
+                        " COUNT(DISTINCT a.id) AS album_count, " +
+                        " COUNT(DISTINCT p.id) AS playlist_count, " +
+                        " COUNT(DISTINCT f.id) AS flow_count " +
+                        " FROM " +
+                        " user u " +
+                        " LEFT JOIN album a ON u.id = a.user_id " +
+                        " LEFT JOIN play_list p ON u.id = p.user_id " +
+                        " LEFT JOIN flow f ON u.id = f.artist_id " +
+                        " WHERE " +
+                        " u.id = :artistId " +
+                        " GROUP BY " +
+                        " u.id; ", nativeQuery = true)
+        List<Object[]> getIndexArtist(@Param("artistId") int artistId);
+
+        @Query(value = " select u.id , u.name , u.avatar , count(distinct f.id) " +
+                        " from user u " +
+                        " LEFT join flow f on f.user_id = u.id " +
+                        " where u.id = :userId " +
+                        " GROUP BY " +
+                        "  u.id;", nativeQuery = true)
+        List<Object[]> getIndexUser(@Param("userId") int userId);
+
+        
 
 }

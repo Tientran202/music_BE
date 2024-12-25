@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.be.dto.response.IndexMusicRespone;
 import com.example.be.dto.response.home.NewMusicResponse;
+import com.example.be.dto.response.indexAlbumPage.MusicByAlbumIdResponse;
 import com.example.be.dto.response.search.SearchMusicResponse;
 import com.example.be.model.Music;
 import com.example.be.repository.MusicRepository;
@@ -70,5 +71,12 @@ public class MusicController {
     public List<SearchMusicResponse> searchMusic(@RequestParam String keyword) {
         return musicService.searchMusic(keyword);
     }
+
+    @GetMapping("/getMusicByAlbumId")
+    public List<MusicByAlbumIdResponse> getMusicByAlbumId(@RequestParam int albumId) {
+        return musicService.getMusicByAlbum(albumId);
+    }
+
+    
 
 }

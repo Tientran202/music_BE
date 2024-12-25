@@ -13,6 +13,8 @@ import com.example.be.dto.response.admin.ListArtistResponse;
 import com.example.be.dto.response.admin.ListUserResponse;
 import com.example.be.dto.response.admin.RequestArtistResponse;
 import com.example.be.dto.response.home.PopularArtistResponse;
+import com.example.be.dto.response.indexArtist.IndexArtistResponse;
+import com.example.be.dto.response.indexUser.IndexUserResponse;
 import com.example.be.dto.response.search.SearchArtistResponse;
 import com.example.be.model.Account;
 import com.example.be.model.User;
@@ -98,32 +100,21 @@ public class UserService {
                                                 (byte[]) result[2]))
                                 .collect(Collectors.toList());
 
-                // Lọc các bài hát có độ tương đồng trên 80%
                 List<SearchArtistResponse> highSimilarityMusics = artists.stream()
                                 .filter(artist -> isSimilar(artist.getName(), keyword, SIMILARITY_THRESHOLD_HIGH))
                                 .sorted((m1, m2) -> Integer.compare(similarity(m2.getName(), keyword),
-                                                similarity(m1.getName(), keyword))) // Sắp xếp theo độ tương đồng giảm
-                                                                                    // dần
+                                                similarity(m1.getName(), keyword)))
                                 .collect(Collectors.toList());
-
-                // Nếu không có kết quả với độ tương đồng trên 80%, tìm kiếm lại với độ tương
-                // đồng trên 10%
                 if (highSimilarityMusics.isEmpty()) {
-                        return artists.stream()
-                                        .filter(music -> isSimilar(music.getName(), keyword, SIMILARITY_THRESHOLD_LOW)) // Kiểm
-                                                                                                                        // tra
-                                                                                                                        // độ
-                                                                                                                        // tương
-                                                                                                                        // đồng
-                                                                                                                        // trên
-                                                                                                                        // 10%
+                        highSimilarityMusics = artists.stream()
+                                        .filter(music -> isSimilar(music.getName(), keyword, SIMILARITY_THRESHOLD_LOW))
                                         .sorted((m1, m2) -> Integer.compare(similarity(m2.getName(), keyword),
-                                                        similarity(m1.getName(), keyword))) // Sắp xếp theo độ tương
-                                                                                            // đồng giảm dần
+                                                        similarity(m1.getName(), keyword)))
                                         .collect(Collectors.toList());
+                        if (highSimilarityMusics.isEmpty()) {
+                                return artists;
+                        }
                 }
-
-                // Trả về kết quả tìm kiếm với độ tương đồng trên 80% nếu có
                 return highSimilarityMusics;
         }
 
@@ -139,6 +130,29 @@ public class UserService {
                         return 100;
                 int diff = distance.apply(text.toLowerCase(), keyword.toLowerCase());
                 return (int) (((double) (maxLen - diff) / maxLen) * 100);
+        }
+
+        public IndexArtistResponse getIndexArtist(int artistId) {
+                List<Object[]> queryResults = userRepository.getIndexArtist(artistId);
+                Object[] data = queryResults.get(0);
+                IndexArtistResponse response = new IndexArtistResponse();
+                response.setArtist_name((String) data[0]);
+                response.setArtist_image((byte[]) data[1]);
+                response.setAlbum_count((Long) data[2]);
+                response.setPlaylist_count((Long) data[3]);
+                response.setFlow_count((Long) data[4]);
+                return response;
+        }
+
+        public IndexUserResponse getIndexUser(int userId) {
+                List<Object[]> queryResults = userRepository.getIndexUser(userId);
+                Object[] data = queryResults.get(0);
+                IndexUserResponse response = new IndexUserResponse();
+                response.setUser_id((int) data[0]);
+                response.setUser_name((String) data[1]);
+                response.setUser_img((byte[]) data[2]);
+                response.setTotal_playlist((Long) data[3]);
+                return response;
         }
 
 }

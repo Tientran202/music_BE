@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.be.dto.request.InfoAccountRequest;
 import com.example.be.dto.response.home.PopularArtistResponse;
+import com.example.be.dto.response.indexArtist.IndexArtistResponse;
+import com.example.be.dto.response.indexUser.IndexUserResponse;
 import com.example.be.dto.response.search.SearchArtistResponse;
 import com.example.be.service.UserService;
 
@@ -43,5 +45,14 @@ public class UserController {
      @GetMapping("/searchArtist")
     public List<SearchArtistResponse> searchMusic(@RequestParam String keyword) {
         return userService.searchArtist(keyword);
+    }
+
+    @GetMapping("/getIndexArtist")
+    public IndexArtistResponse getIndexArtist(@RequestParam int artistId) {
+        return userService.getIndexArtist(artistId);
+    }
+    @GetMapping("/getIndexUser")
+    public IndexUserResponse getIndexUser(@RequestParam int userId) {
+        return userService.getIndexUser(userId);
     }
 }

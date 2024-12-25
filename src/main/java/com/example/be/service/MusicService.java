@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.example.be.dto.response.GenreMusicRespone;
 import com.example.be.dto.response.IndexMusicRespone;
 import com.example.be.dto.response.home.NewMusicResponse;
+import com.example.be.dto.response.indexAlbumPage.MusicByAlbumIdResponse;
 import com.example.be.dto.response.search.SearchMusicResponse;
 import com.example.be.model.Music;
 import com.example.be.repository.MusicRepository;
@@ -21,7 +22,7 @@ public class MusicService {
     @Autowired
     private MusicRepository musicRepository;
 
-    private static final int SIMILARITY_THRESHOLD_HIGH = 50; 
+    private static final int SIMILARITY_THRESHOLD_HIGH = 50;
     private static final int SIMILARITY_THRESHOLD_LOW = 10;
 
     public Optional<Music> getMusicById(int id) {
@@ -79,8 +80,8 @@ public class MusicService {
                         (String) result[1],
                         (byte[]) result[2],
                         (String) result[3],
-                        (BigDecimal) result[4]
-                )).collect(Collectors.toList());
+                        (BigDecimal) result[4]))
+                .collect(Collectors.toList());
 
         // Lọc các bài hát có độ tương đồng trên 80%
         List<SearchMusicResponse> highSimilarityMusics = musics.stream()
@@ -92,13 +93,16 @@ public class MusicService {
         // Nếu không có kết quả với độ tương đồng trên 80%, tìm kiếm lại với độ tương
         // đồng trên 10%
         if (highSimilarityMusics.isEmpty()) {
-            return musics.stream()
+            highSimilarityMusics = musics.stream()
                     .filter(music -> isSimilar(music.getMusicName(), keyword, SIMILARITY_THRESHOLD_LOW)) // Kiểm tra độ
                                                                                                          // tương đồng
                                                                                                          // trên 10%
                     .sorted((m1, m2) -> Integer.compare(similarity(m2.getMusicName(), keyword),
                             similarity(m1.getMusicName(), keyword))) // Sắp xếp theo độ tương đồng giảm dần
                     .collect(Collectors.toList());
+            if (highSimilarityMusics.isEmpty()) {
+                return musics;
+            }
         }
 
         // Trả về kết quả tìm kiếm với độ tương đồng trên 80% nếu có
@@ -117,5 +121,17 @@ public class MusicService {
             return 100;
         int diff = distance.apply(text.toLowerCase(), keyword.toLowerCase());
         return (int) (((double) (maxLen - diff) / maxLen) * 100);
+    }
+
+    public List<MusicByAlbumIdResponse> getMusicByAlbum(int albumId) {
+        List<Object[]> queryResults = musicRepository.getMusicByAlbum(albumId);
+        // Chuyển đổi dữ liệu từ query result sang DTO
+        return queryResults.stream()
+                .map(result -> new MusicByAlbumIdResponse(
+                        (int) result[0], // musicId
+                        (String) result[1], // genre
+                        (byte[]) result[2], // musicImg
+                        (BigDecimal) result[3]// musicImg
+                )).collect(Collectors.toList());
     }
 }
