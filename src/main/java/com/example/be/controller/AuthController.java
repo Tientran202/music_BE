@@ -1,6 +1,8 @@
 package com.example.be.controller;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.be.dto.request.LoginRequestDTO;
 import com.example.be.dto.request.TokenRequest;
 import com.example.be.dto.response.AuthResponse;
+import com.example.be.dto.response.home.IdRoleResponse;
 import com.example.be.jwt.JwtTokenUtil;
 import com.example.be.model.Account;
 import com.example.be.model.User;
 import com.example.be.repository.UserRepository;
 import com.example.be.service.AccountService;
 import com.example.be.service.EmailService;
+import com.example.be.service.UserService;
 
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,6 +53,9 @@ public class AuthController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid Account account, BindingResult bindingResult,
@@ -97,11 +104,12 @@ public class AuthController {
     public AuthResponse login(@RequestBody LoginRequestDTO loginRequest) {
         boolean isAuthenticated = accountService.login(loginRequest);
         String info = loginRequest.getUsername();
+        String role =  userService.getRoleByUsername(info);
         if (isAuthenticated) {
             String accessToken = jwtTokenUtil.generateAccessToken(loginRequest.getUsername());
             String refreshToken = jwtTokenUtil.generateRefreshToken(loginRequest.getUsername());
             accountService.updateAccessTokenAndRefreshToken(info, accessToken, refreshToken);
-            return new AuthResponse(accessToken, refreshToken);
+            return new AuthResponse(accessToken, refreshToken, role);
         } else {
             throw new RuntimeException("Tên đăng nhập hoặc mật khẩu bị sai");
         }
@@ -134,13 +142,15 @@ public class AuthController {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                             .body("{\"error\": \"access_token_expired\", \"message\": \"Your access token has expired. Please refresh it.\"}");
                 }
-
                 // Lấy thông tin từ token
                 String username = jwtTokenUtil.getUsernameFromToken(token);
-
-                // Tìm user trong cơ sở dữ liệu
-                int userId = accountService.getIdAccountByUserName(username);
-                return ResponseEntity.ok(Collections.singletonMap("user_id", userId));
+                IdRoleResponse idRoleResponse = accountService.getIdAccountByUserName(username);
+                int userId = idRoleResponse.getAccount_id();
+                String role = idRoleResponse.getRole();
+                Map<String, Object> response = new HashMap<>();
+                response.put("userId", userId);
+                response.put("role", role);
+                return ResponseEntity.ok(response);
 
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)

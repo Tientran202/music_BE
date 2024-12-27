@@ -14,6 +14,7 @@ import com.example.be.dto.response.admin.ListUserResponse;
 import com.example.be.dto.response.admin.RequestArtistResponse;
 import com.example.be.dto.response.home.PopularArtistResponse;
 import com.example.be.dto.response.indexArtist.IndexArtistResponse;
+import com.example.be.dto.response.indexUser.FlowingByUserIdResponse;
 import com.example.be.dto.response.indexUser.IndexUserResponse;
 import com.example.be.dto.response.search.SearchArtistResponse;
 import com.example.be.model.Account;
@@ -153,6 +154,24 @@ public class UserService {
                 response.setUser_img((byte[]) data[2]);
                 response.setTotal_playlist((Long) data[3]);
                 return response;
+        }
+
+        public List<FlowingByUserIdResponse> getFlowingByUserId(int userId) {
+                List<Object[]> queryResults = userRepository.getFllowingByUserId(userId);
+
+                // Chuyển đổi dữ liệu từ query result sang DTO
+                return queryResults.stream()
+                                .map(result -> new FlowingByUserIdResponse(
+                                                (int) result[0], // musicId
+                                                (String) result[1], // genre
+                                                (byte[]) result[2] // musicImg
+                                )).collect(Collectors.toList());
+        }
+
+        public String getRoleByUsername(String username) {
+                List<String> queryResults = userRepository.getRoleByUsername(username);
+                String data = queryResults.get(0);
+                return data;
         }
 
 }

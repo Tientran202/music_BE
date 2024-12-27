@@ -30,4 +30,10 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
             " where u.id = :userId " +
             " limit 7 ", nativeQuery = true)
     List<Object[]> getPlaylistByUserId(@Param("userId") int userId);
+
+    @Query(value = "select " +
+                        " al.id , al.album_name , al.img , al.release_day , a.id , a.stage_name " +
+                        " from album al "+
+                        " join user a on al.user_id = a.id ", nativeQuery = true)
+        List<Object[]> getAllPlayList();
 }

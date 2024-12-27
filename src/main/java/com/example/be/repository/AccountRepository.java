@@ -1,5 +1,6 @@
 package com.example.be.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,10 +26,11 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
         return optionalAccount;
     }
 
-    @Query(value = "SELECT a.id " +
-            "FROM account a " +
-            "WHERE a.username = :username", nativeQuery = true)
-    int getIdAccountByUserName(@Param("username") String username);
+    @Query(value = "SELECT a.id , u.role" +
+            " FROM account a " +
+            " join user u on u.account = a.id " +
+            " WHERE a.username = :username ", nativeQuery = true)
+     List<Object[]> getIdAccountByUserName(@Param("username") String username);
 
     @Query(value = "SELECT l.music_id , m.music_name , m.img " +
             " FROM listening_history a " +

@@ -1,5 +1,6 @@
 package com.example.be.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.be.dto.request.LoginRequestDTO;
+import com.example.be.dto.response.home.IdRoleResponse;
 import com.example.be.model.Account;
 import com.example.be.repository.AccountRepository;
 
@@ -52,9 +54,14 @@ public class AccountService {
         return false;
     }
 
-    public int getIdAccountByUserName(String username) {
-        int id = accountRepository.getIdAccountByUserName(username);
-        return id;
+    public IdRoleResponse getIdAccountByUserName(String username) {
+        List<Object[]> idRoleResponse = accountRepository.getIdAccountByUserName(username);
+        Object[] data = idRoleResponse.get(0);
+        IdRoleResponse response = new IdRoleResponse();
+        response.setAccount_id((int) data[0]);
+        response.setRole((String) data[1]);
+        return response;
+        
     }
 
     public void register(String usename, String email) {

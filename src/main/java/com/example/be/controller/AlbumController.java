@@ -42,4 +42,9 @@ public class AlbumController {
         return albumService.getAlbumByArtistId(artistId);
     }
 
+    // @GetMapping("getAllAlbum")
+    // public List<AllAlbumResponse> getAllAlbum() {
+    //     return albumService.getAllAlbum();
+    // }
+
 }

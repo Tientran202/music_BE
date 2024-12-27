@@ -42,8 +42,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                         " join listening_history l on l.user_id = u.id " +
                         " join music m on l.music_id= m.id " +
                         " join user a on a.id = m.artist_id " +
-                        " where u.account= :artistId " +
-                        " limit 8 ", nativeQuery = true)
+                        " where u.account= :artistId ", nativeQuery = true)
         List<Object[]> getPopularArtist(@Param("artistId") int artistId);
 
         @Query(value = " select a.id , a.stage_name , a.avatar " +
@@ -76,6 +75,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
                         "  u.id;", nativeQuery = true)
         List<Object[]> getIndexUser(@Param("userId") int userId);
 
-        
+        @Query(value = " select a.id , a.name , a.avatar " +
+                        " from user u " +
+                        " join flow f on f.user_id = u.id " +
+                        " join user a on a.id = f.artist_id " +
+                        " where u.id = :userId " +
+                        " limit 7 ", nativeQuery = true)
+        List<Object[]> getFllowingByUserId(@Param("userId") int userId);
+
+        @Query("SELECT u.role FROM User u JOIN u.account a WHERE a.username = :username")
+        List<String> getRoleByUsername(@Param("username") String username);
 
 }

@@ -13,7 +13,6 @@ public interface ListeningHistoryRepository extends JpaRepository<ListeningHisto
             " from listening_history l " +
             " join user u on u.id = l.user_id " +
             " join music m on m.id = l.music_id " +
-            " where u.account = :account " +
-            " limit 8", nativeQuery = true)
+            " where u.account = :account ", nativeQuery = true)
     List<Object[]> getListeningHistory(@Param("account") int account);
 }

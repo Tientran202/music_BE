@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.be.dto.response.IndexMusicRespone;
 import com.example.be.dto.response.home.NewMusicResponse;
 import com.example.be.dto.response.indexAlbumPage.MusicByAlbumIdResponse;
+import com.example.be.dto.response.indexMusic.IndexMusicResponse;
+import com.example.be.dto.response.indexMusic.SuggestedMusicResponse;
 import com.example.be.dto.response.search.SearchMusicResponse;
 import com.example.be.model.Music;
 import com.example.be.repository.MusicRepository;
@@ -57,7 +58,7 @@ public class MusicController {
 
     @GetMapping("/getIndexMusicArtist/{id}")
     public ResponseEntity<?> getIndexMusic(@PathVariable int id) {
-        IndexMusicRespone indexMusic = musicService.getIndexMusicByMusicId(id);
+        IndexMusicResponse indexMusic = musicService.getIndexMusicByMusicId(id);
         return ResponseEntity.ok(indexMusic);
     }
 
@@ -77,6 +78,8 @@ public class MusicController {
         return musicService.getMusicByAlbum(albumId);
     }
 
-    
-
+    @GetMapping("/getSuggestedMusicResponse")
+    public List<SuggestedMusicResponse> getSuggestedMusicResponse(@RequestParam int artistId) {
+        return musicService.getSuggestedMusicResponse(artistId);
+    }
 }

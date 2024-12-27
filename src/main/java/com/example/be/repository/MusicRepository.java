@@ -25,7 +25,7 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
                         "WHERE g.id = :genreId", nativeQuery = true)
         List<Object[]> findMusicByGenreId(@Param("genreId") int genreId);
 
-        @Query(value = "SELECT m.audio, m.img, m.duration, m.lyrics, m.music_name, u.name, u.stage_name " +
+        @Query(value = "SELECT m.audio, m.img, m.duration, m.lyrics, m.music_name, u.name, u.stage_name , m.artist_id " +
                         "FROM music m " +
                         "JOIN user u ON m.artist_id = u.id " +
                         "WHERE m.id = :musicId", nativeQuery = true)
@@ -33,8 +33,7 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
 
         @Query(value = " SELECT m.id, m.music_name, m.img " +
                         " FROM music m " +
-                        " order by m.release_date desc " +
-                        " limit 8 ", nativeQuery = true)
+                        " order by m.release_date desc ", nativeQuery = true)
         List<Object[]> getNewMusic();
 
         @Query(value = " SELECT m.id, m.music_name, m.img , u.stage_name , m.duration " +
@@ -42,10 +41,15 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
                         " join user u on u.id = m.artist_id ", nativeQuery = true)
         List<Object[]> getSearchMusic();
 
-        @Query(value = " select m.id , m.music_name , m.img , m.duration " +
+        @Query(value = " select m.id , m.music_name , m.img , m.duration , m.audio " +
                         " from music m " +
                         " where m.album_id = :albumId ", nativeQuery = true)
         List<Object[]> getMusicByAlbum(@Param("albumId") int albumId);
-        
 
+        @Query(value = " select m.id , m.music_name , m.img " +
+                        " from music m " +
+                        " where m.artist_id = :artistId ", nativeQuery = true)
+        List<Object[]> getSuggestedMusicByArtistId(@Param("artistId") int artistId);
+
+        
 }

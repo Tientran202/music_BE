@@ -30,7 +30,10 @@ public class AlbumService {
                 .map(result -> new AlbumTopResponse(
                         (int) result[0], // musicId
                         (String) result[1], // genre
-                        (byte[]) result[2] // musicImg
+                        (byte[]) result[2], // musicImg
+                        (Date) result[3], // musicId
+                        (int) result[4], // genre
+                        (String) result[5] // musicImg
                 )).collect(Collectors.toList());
     }
 
@@ -108,5 +111,18 @@ public class AlbumService {
                         (byte[]) result[2] // genre
                 )).collect(Collectors.toList());
     }
+
+    // public List<AllAlbumResponse> getAllAlbum() {
+    //     List<Object[]> queryResults = albumRepository.getAllAlbum();
+    //     return queryResults.stream()
+    //             .map(result -> new AllAlbumResponse(
+    //                     (int) result[0], // musicId
+    //                     (String) result[1], // musicImg
+    //                     (byte[]) result[2], // genre
+    //                     (Date) result[3],
+    //                     (int) result[4], // musicId
+    //                     (String) result[5]// musicImg
+    //             )).collect(Collectors.toList());
+    // }
 
 }

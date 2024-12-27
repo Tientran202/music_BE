@@ -1,8 +1,8 @@
-package com.example.be.dto.response;
+package com.example.be.dto.response.indexMusic;
 
 import java.math.BigDecimal;
 
-public class IndexMusicRespone {
+public class IndexMusicResponse {
     private byte[] musicAudio;
     private byte[] musicImg;
     private BigDecimal duration;
@@ -10,13 +10,14 @@ public class IndexMusicRespone {
     private String music_name;
     private String artist_name;
     private String stage_name;
+    private int artist_id;
 
-    public IndexMusicRespone() {
+    public IndexMusicResponse() {
 
     }
 
-    public IndexMusicRespone(byte[] musicAudio, byte[] musicImg, BigDecimal duration, String lyrics, String music_name,
-            String artist_name, String stage_name) {
+    public IndexMusicResponse(byte[] musicAudio, byte[] musicImg, BigDecimal duration, String lyrics, String music_name,
+            String artist_name, String stage_name, int artist_id) {
         this.musicAudio = musicAudio;
         this.musicImg = musicImg;
         this.duration = duration;
@@ -24,6 +25,7 @@ public class IndexMusicRespone {
         this.music_name = music_name;
         this.artist_name = artist_name;
         this.stage_name = stage_name;
+        this.artist_id = artist_id;
     }
 
     public byte[] getMusicAudio() {
@@ -36,6 +38,14 @@ public class IndexMusicRespone {
 
     public byte[] getMusicImg() {
         return musicImg;
+    }
+
+    public int getArtist_id() {
+        return artist_id;
+    }
+
+    public void setArtist_id(int artist_id) {
+        this.artist_id = artist_id;
     }
 
     public void setMusicImg(byte[] musicImg) {

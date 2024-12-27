@@ -7,16 +7,21 @@ public class MusicByAlbumIdResponse {
     private String music_name;
     private byte[] img;
     private BigDecimal duration;
+    private byte[] audio;
+
 
     public MusicByAlbumIdResponse() {
     }
 
-    public MusicByAlbumIdResponse(int id, String music_name, byte[] img, BigDecimal duration) {
+
+    public MusicByAlbumIdResponse(int id, String music_name, byte[] img, BigDecimal duration, byte[] audio) {
         this.id = id;
         this.music_name = music_name;
         this.img = img;
         this.duration = duration;
+        this.audio = audio;
     }
+
 
     public int getId() {
         return id;
@@ -48,6 +53,16 @@ public class MusicByAlbumIdResponse {
 
     public void setImg(byte[] img) {
         this.img = img;
+    }
+
+
+    public byte[] getAudio() {
+        return audio;
+    }
+
+
+    public void setAudio(byte[] audio) {
+        this.audio = audio;
     }
 
 }

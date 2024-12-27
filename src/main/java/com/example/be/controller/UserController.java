@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.be.dto.request.InfoAccountRequest;
 import com.example.be.dto.response.home.PopularArtistResponse;
 import com.example.be.dto.response.indexArtist.IndexArtistResponse;
+import com.example.be.dto.response.indexUser.FlowingByUserIdResponse;
 import com.example.be.dto.response.indexUser.IndexUserResponse;
 import com.example.be.dto.response.search.SearchArtistResponse;
 import com.example.be.service.UserService;
@@ -54,5 +55,10 @@ public class UserController {
     @GetMapping("/getIndexUser")
     public IndexUserResponse getIndexUser(@RequestParam int userId) {
         return userService.getIndexUser(userId);
+    }
+
+    @GetMapping("/getFlowingByUserId")
+    public List<FlowingByUserIdResponse> getFlowingByUserId(@RequestParam int userId) {
+        return userService.getFlowingByUserId(userId);
     }
 }

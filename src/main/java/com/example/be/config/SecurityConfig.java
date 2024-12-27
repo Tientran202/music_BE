@@ -34,12 +34,6 @@ public class SecurityConfig {
                 .build();
     }
 
-    // @Bean
-    // public JwtAuthenticationFilter jwtAuthenticationFilter() {
-    // return new JwtAuthenticationFilter(); // Filter sẽ được Spring quản lý tại
-    // đây
-    // }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -72,13 +66,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/user/searchArtist").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/user/getIndexArtist").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/user/getIndexUser").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/user/getFlowingByUserId").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/music/getNewMusic").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/music/getMusicByAlbumId").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/music/getSuggestedMusicResponse").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/album/getTopAlbum").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/album/getIndexAlbum/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/album/getSearchAlbum").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/album/getAlbumByArtistId").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/album/getAllAlbum").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh-token").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/listening-history/recently-music").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/user/profile").authenticated()
