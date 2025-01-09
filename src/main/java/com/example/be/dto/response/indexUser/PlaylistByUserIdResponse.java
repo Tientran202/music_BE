@@ -11,6 +11,10 @@ public class PlaylistByUserIdResponse {
         this.playlist_name = playlist_name;
         this.playlist_img = playlist_img;
     }
+    public PlaylistByUserIdResponse(int playlist_id, String playlist_name) {
+        this.playlist_id = playlist_id;
+        this.playlist_name = playlist_name;
+    }
     public int getPlaylist_id() {
         return playlist_id;
     }

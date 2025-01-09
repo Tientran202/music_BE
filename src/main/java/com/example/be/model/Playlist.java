@@ -26,9 +26,10 @@ public class Playlist {
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "musicId", referencedColumnName = "id")
-    private Music music;
+    private boolean hidden = false;
+
+    public Playlist() {
+    }
 
     public float getListening_duration() {
         return listening_duration;
@@ -39,7 +40,6 @@ public class Playlist {
     }
 
     private float listening_duration;
-
 
     public String getPlaylistName() {
         return playlistName;
@@ -65,20 +65,20 @@ public class Playlist {
         this.user = user;
     }
 
-    public Music getMusic() {
-        return music;
-    }
-
-    public void setMusic(Music music) {
-        this.music = music;
-    }
-
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
 }

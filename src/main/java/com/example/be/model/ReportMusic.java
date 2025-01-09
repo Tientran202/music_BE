@@ -52,6 +52,9 @@ public class ReportMusic {
     public void setDay(Date day) {
         this.day = day;
     }
+    public void setDay() {
+        this.day = new Date();
+    }
 
     @Lob
     private String reportContent;

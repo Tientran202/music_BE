@@ -1,5 +1,9 @@
 package com.example.be.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +12,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.be.dto.response.admin.ListArtistResponse;
 import com.example.be.dto.response.admin.ListUserResponse;
@@ -18,8 +23,10 @@ import com.example.be.dto.response.indexUser.FlowingByUserIdResponse;
 import com.example.be.dto.response.indexUser.IndexUserResponse;
 import com.example.be.dto.response.search.SearchArtistResponse;
 import com.example.be.model.Account;
+import com.example.be.model.Follow;
 import com.example.be.model.User;
 import com.example.be.repository.AccountRepository;
+import com.example.be.repository.FollowRepository;
 import com.example.be.repository.UserRepository;
 
 @Service
@@ -29,6 +36,9 @@ public class UserService {
 
         @Autowired
         private UserRepository userRepository;
+
+        @Autowired
+        private FollowRepository followRepository;
 
         private static final int SIMILARITY_THRESHOLD_HIGH = 50; // Ngưỡng 80% để tìm bài hát với độ tương đồng cao
         private static final int SIMILARITY_THRESHOLD_LOW = 10;
@@ -46,7 +56,6 @@ public class UserService {
         public List<RequestArtistResponse> requestToBecomeArtist() {
                 List<Object[]> queryResults = userRepository.findAllRequestToBecomeArtist();
 
-                // Chuyển đổi dữ liệu từ query result sang DTO
                 return queryResults.stream()
                                 .map(result -> new RequestArtistResponse(
                                                 (int) result[0], // musicId
@@ -83,6 +92,15 @@ public class UserService {
 
         public List<PopularArtistResponse> getPopularArtist(int id) {
                 List<Object[]> queryResults = userRepository.getPopularArtist(id);
+                if (queryResults.isEmpty()) {
+                        queryResults = userRepository.getAllArtist(id);
+                        return queryResults.stream()
+                                        .map(result -> new PopularArtistResponse(
+                                                        (int) result[0], // musicId
+                                                        (String) result[1], // genre
+                                                        (byte[]) result[2] // musicName
+                                        )).collect(Collectors.toList());
+                }
                 return queryResults.stream()
                                 .map(result -> new PopularArtistResponse(
                                                 (int) result[0], // musicId
@@ -141,7 +159,8 @@ public class UserService {
                 response.setArtist_image((byte[]) data[1]);
                 response.setAlbum_count((Long) data[2]);
                 response.setPlaylist_count((Long) data[3]);
-                response.setFlow_count((Long) data[4]);
+                response.setMusic_count((Long) data[4]);
+                response.setFlow_count((Long) data[5]);
                 return response;
         }
 
@@ -151,8 +170,9 @@ public class UserService {
                 IndexUserResponse response = new IndexUserResponse();
                 response.setUser_id((int) data[0]);
                 response.setUser_name((String) data[1]);
-                response.setUser_img((byte[]) data[2]);
-                response.setTotal_playlist((Long) data[3]);
+                response.setStage_name((String) data[2]);
+                response.setUser_img((byte[]) data[3]);
+                response.setTotal_playlist((Long) data[4]);
                 return response;
         }
 
@@ -174,4 +194,130 @@ public class UserService {
                 return data;
         }
 
+        public int getUserIdByAccountId(int accountId) {
+                List<Object[]> queryResults = userRepository.getUserIdByAccountId(accountId);
+                int userId = (int) queryResults.get(0)[0];
+                return userId;
+        }
+
+        public void updateUserProfile(int userId, String name, String artistName, MultipartFile image)
+                        throws Exception {
+                // Tìm user từ cơ sở dữ liệu
+                User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new Exception("Người dùng không tồn tại"));
+
+                // Cập nhật thông tin
+                user.setName(name);
+                user.setStageName(artistName);
+
+                // Nếu có ảnh, chuyển đổi ảnh thành byte[] và lưu
+                if (image != null && !image.isEmpty()) {
+                        byte[] avatarBytes = image.getBytes();
+                        user.setAvatar(avatarBytes);
+                }
+
+                // Lưu thay đổi vào database
+                userRepository.save(user);
+        }
+
+        public void updateUserProfileUser(int userId, String name, MultipartFile image)
+                        throws Exception {
+                // Tìm user từ cơ sở dữ liệu
+                User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new Exception("Người dùng không tồn tại"));
+
+                // Cập nhật thông tin
+                user.setName(name);
+                // Nếu có ảnh, chuyển đổi ảnh thành byte[] và lưu
+                if (image != null && !image.isEmpty()) {
+                        byte[] avatarBytes = image.getBytes();
+                        user.setAvatar(avatarBytes);
+                }
+
+                // Lưu thay đổi vào database
+                userRepository.save(user);
+        }
+
+        public byte[] getDefaultAvatar() {
+                try {
+                        Path path = Paths.get("./src/main/java/com/example/be/img/user (1).png"); // Đường dẫn đến ảnh
+                                                                                                  // mặc định
+                        return Files.readAllBytes(path); // Chuyển ảnh mặc định thành byte[]
+                } catch (IOException e) {
+                        throw new RuntimeException("Unable to read default avatar", e);
+                }
+        }
+
+        public boolean requestToBecomeArtistToUser(int userId, String stageName) {
+                Optional<User> queryResults = userRepository.findById(userId);
+                User user = queryResults.get();
+                if (user.isRequest_artist()) {
+                        return false;
+                }
+                user.setRequest_artist(true);
+                user.setStageName(stageName);
+                userRepository.save(user);
+                return true;
+        }
+
+        public void flowArtist(int userId, int artistId) {
+                List<Follow> listFollows = followRepository.findByUserId(userId);
+                for (Follow follow : listFollows) {
+                        User artist = follow.getArtist();
+                        if (artist.getId() == artistId) {
+                                follow.setFollow(true);
+                                followRepository.save(follow);
+                                return;
+                        }
+                }
+                Follow follow = new Follow();
+                Optional<User> useOptional = userRepository.findById(userId);
+                User user = useOptional.get();
+                Optional<User> artistOptional = userRepository.findById(artistId);
+                User artist = artistOptional.get();
+                follow.setUser(user);
+                follow.setArtist(artist);
+                follow.setFollow(true);
+                followRepository.save(follow);
+        }
+
+        public void unFollow(int userId, int artistId) {
+                List<Follow> follows = followRepository.findByUserId(userId);
+                for (Follow follow : follows) {
+                        User artist = follow.getArtist();
+                        if (artist.getId() == artistId) {
+                                follow.setFollow(false);
+                                followRepository.save(follow);
+                        }
+                }
+        }
+
+        public boolean getFollow(int userId, int artistId) {
+                List<Follow> follows = followRepository.findByUserId(userId);
+                for (Follow follow : follows) {
+                        User artist = follow.getArtist();
+                        if (artist.getId() == artistId) {
+                                if (follow.isFollow()) {
+                                        return true;
+                                }
+                        }
+                }
+                return false;
+        }
+
+        public Long getNumberOfArtist() {
+                return userRepository.getNumberOfArtist();
+        }
+
+        public Long getNumberOfUser() {
+                return userRepository.getNumberOfUser();
+        }
+
+        public void acceptRequestArtist(int userId) {
+                Optional<User> userOptional = userRepository.findById(userId);
+                User user = userOptional.get();
+                user.setRole("artist");
+                user.setRequest_artist(false);
+                userRepository.save(user);
+        }
 }

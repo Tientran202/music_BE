@@ -23,7 +23,7 @@ public class JwtTokenUtil {
     private String secretKeyString;
 
     private SecretKey SECRET_KEY;
-    private final long ACCESS_TOKEN_EXPIRY = 1000 * 60 * 15; // 15 phút
+    private final long ACCESS_TOKEN_EXPIRY = 1000 * 60 * 30; // 15 phút
     private final long REFRESH_TOKEN_EXPIRY = 1000 * 60 * 60 * 24 * 7; // 7 ngày
 
     @PostConstruct

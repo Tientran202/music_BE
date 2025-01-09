@@ -12,11 +12,19 @@ import com.example.be.repository.ListeningHistoryRepository;
 @Service
 public class ListeningHistoryService {
     @Autowired
-    ListeningHistoryRepository listeningHistoryRepository;
+    ListeningHistoryRepository listeningHistoryRepository;      
 
     public List<RecentlyListenedMusicResponse> getRecentlyMusic(int account) {
         List<Object[]> queryResults = listeningHistoryRepository.getListeningHistory(account);
-        // Chuyển đổi dữ liệu từ query result sang DTO
+        if (queryResults.isEmpty()) {
+            queryResults = listeningHistoryRepository.getAllListeningHistory(account);
+            return queryResults.stream()
+                    .map(result -> new RecentlyListenedMusicResponse(
+                            (int) result[0], // musicId
+                            (String) result[1], // genre
+                            (byte[]) result[2]// musicImg
+                    )).collect(Collectors.toList());
+        }
         return queryResults.stream()
                 .map(result -> new RecentlyListenedMusicResponse(
                         (int) result[0], // musicId

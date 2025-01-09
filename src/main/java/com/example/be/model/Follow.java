@@ -9,8 +9,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "flow")
-public class Flow {
+@Table(name = "follow")
+public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -21,6 +21,11 @@ public class Flow {
     @ManyToOne
     @JoinColumn(name = "artistId", referencedColumnName = "id")
     private User artist;
+
+    private boolean follow;
+
+    public Follow() {
+    }
 
     public int getId() {
         return id;
@@ -44,6 +49,14 @@ public class Flow {
 
     public void setArtist(User artist) {
         this.artist = artist;
+    }
+
+    public boolean isFollow() {
+        return follow;
+    }
+
+    public void setFollow(boolean follow) {
+        this.follow = follow;
     }
 
 

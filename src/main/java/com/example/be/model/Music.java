@@ -47,9 +47,25 @@ public class Music {
 
     private BigInteger plays;
 
+    private boolean confirmation = false;
+
     @ManyToOne
     @JoinColumn(name = "albumId", referencedColumnName = "id")
     private Album album;
+    private boolean hidden = false;
+
+    public Music() {
+    }
+
+    public Music(String musicName, byte[] audio) {
+        this.musicName = musicName;
+        this.audio = audio;
+    }
+
+    public Music(int id, String musicName) {
+        this.id = id;
+        this.musicName = musicName;
+    }
 
     public String getMusicName() {
         return musicName;
@@ -145,6 +161,22 @@ public class Music {
 
     public void setListening_duration(float listening_duration) {
         this.listening_duration = listening_duration;
+    }
+
+    public boolean isConfirmation() {
+        return confirmation;
+    }
+
+    public void setConfirmation(boolean confirmation) {
+        this.confirmation = confirmation;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
 }

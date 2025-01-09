@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.be.dto.request.LoginRequestDTO;
+import com.example.be.dto.request.updatePassResquest;
 import com.example.be.dto.response.home.IdRoleResponse;
 import com.example.be.model.Account;
 import com.example.be.repository.AccountRepository;
@@ -29,14 +30,14 @@ public class AccountService {
     // return false;
     // }
 
-    public void CreateUseClone(String email, String hashedPassword) {
-        Account account = new Account();
-        account.setEmail(email);
-        account.setPassword(hashedPassword);
-        account.setConfirmation(false);
-        account.setRegister_date();
-        accountRepository.save(account);
-    }
+    // public void CreateUseClone(String email, String hashedPassword) {
+    //     Account account = new Account();
+    //     account.setEmail(email);
+    //     account.setPassword(hashedPassword);
+    //     account.setConfirmation(false);
+    //     account.setRegister_date();
+    //     accountRepository.save(account);
+    // }
 
     public void testAPI() {
         Account account = new Account();
@@ -44,12 +45,11 @@ public class AccountService {
         accountRepository.save(account);
     }
 
-    public boolean confirmationEmailByPass(String email, String pass) {
+    public boolean confirmationEmail(String email) {
         Optional<Account> optionalAccount = accountRepository.findByEmail(email);
-
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            return account.getPassword().equals(pass);
+            return account.isConfirmation();
         }
         return false;
     }
@@ -61,13 +61,12 @@ public class AccountService {
         response.setAccount_id((int) data[0]);
         response.setRole((String) data[1]);
         return response;
-        
+
     }
 
-    public void register(String usename, String email) {
+    public void confirAccount(String email) {
         Optional<Account> optionalAccount = accountRepository.findByEmail(email);
         Account account = optionalAccount.get();
-        account.setUsername(usename);
         account.setConfirmation(true);
         accountRepository.save(account);
     }
@@ -79,21 +78,19 @@ public class AccountService {
             return passwordEncoder.matches(loginRequestDTO.getPassword(), account.getPassword());
         } else {
             Optional<Account> accountOptional = accountRepository.findByUsername(loginRequestDTO.getUsername());
+            System.out.println("123456789123456789123456789123456789123456789");
+            
             if (accountOptional.isPresent()) {
                 Account account = accountOptional.get();
+                System.out.println(account.getPassword());
+                System.out.println(account.getUsername());
+                System.out.println(loginRequestDTO.getPassword());
+                System.out.println(loginRequestDTO.getUsername());
                 return passwordEncoder.matches(loginRequestDTO.getPassword(), account.getPassword());
             }
         }
         return false;
     }
-
-    // public Optional<Account> findAccountByInfo(String info) {
-    // Optional<Account> optionalAccount = accountRepository.findByEmail(info);
-    // if (!optionalAccount.isPresent()) {
-    // optionalAccount = accountRepository.findByUsername(info);
-    // }
-    // return optionalAccount;
-    // }
 
     public void updateAccessTokenAndRefreshToken(String info, String accessToken, String refreshToken) {
         Optional<Account> optionalAccount = accountRepository.findAccountByInfo(info);
@@ -124,6 +121,25 @@ public class AccountService {
             return false;
         }
         return true;
+    }
+
+    public boolean updatePass(updatePassResquest updatePassResquest) {
+        int accountId = updatePassResquest.getAccount_id();
+        String newPass = updatePassResquest.getNewPass();
+        String oldPass = updatePassResquest.getOldPass();
+
+        Optional<Account> accountOptional = accountRepository.findById(accountId);
+        if (accountOptional.isPresent()) {
+            Account account = accountOptional.get();
+            if (passwordEncoder.matches(oldPass, account.getPassword())) {
+                String hashedPassword = passwordEncoder.encode(newPass);
+                account.setPassword(hashedPassword);
+                accountRepository.save(account);
+                return true;
+            }
+        }
+        return false;
+
     }
 
 }

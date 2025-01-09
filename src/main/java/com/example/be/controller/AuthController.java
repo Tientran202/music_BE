@@ -13,6 +13,7 @@ import static org.springframework.http.ResponseEntity.badRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,12 +22,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.be.dto.request.LoginRequestDTO;
+import com.example.be.dto.request.RegisterUserRequest;
 import com.example.be.dto.request.TokenRequest;
+import com.example.be.dto.request.updatePassResquest;
 import com.example.be.dto.response.AuthResponse;
 import com.example.be.dto.response.home.IdRoleResponse;
 import com.example.be.jwt.JwtTokenUtil;
 import com.example.be.model.Account;
 import com.example.be.model.User;
+import com.example.be.repository.AccountRepository;
 import com.example.be.repository.UserRepository;
 import com.example.be.service.AccountService;
 import com.example.be.service.EmailService;
@@ -34,7 +38,6 @@ import com.example.be.service.UserService;
 
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -57,37 +60,52 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AccountRepository accountRepository;
+
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid Account account, BindingResult bindingResult,
+    public ResponseEntity<?> register(@RequestBody RegisterUserRequest registerUserRequest, BindingResult bindingResult,
             HttpServletRequest request) {
 
         try {
             if (bindingResult.hasErrors()) {
                 return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.OK);
             }
-            // check email
-            int config = emailService.existByEmailConfirmation(account.getEmail());
-            if (config == 2) {
-                return ResponseEntity.ok("Email exist");
-            }
-            if (config == 1) {
-                return ResponseEntity.ok("The email exists but the account has not been verified");
-            }
+            int config = emailService.existByEmailConfirmation(registerUserRequest.getEmail());
+            // if (config == 2) {
+            // return ResponseEntity.badRequest().body("Email tồn tại");
+            // }
+            // if (config == 1) {
+            // return ResponseEntity.badRequest().body("Email đã đăng kí những chưa được xác
+            // thực");
+            // }
 
-            // Create subject for email, confirmation url and hash pass
-            String hashedPassword = passwordEncoder.encode(account.getPassword());
+            String hashedPassword = passwordEncoder.encode(registerUserRequest.getPassword());
+            Account account = new Account();
+            account.setUsername(registerUserRequest.getUsername());
             account.setPassword(hashedPassword);
             account.setRegister_date();
-            accountService.CreateUseClone(account.getEmail(), account.getPassword());
+            account.setEmail(registerUserRequest.getEmail());
+            accountRepository.save(account);
+            User user = new User();
+            user.setRole("user");
+            user.setAccount(account);
+            user.setName(registerUserRequest.getName());
+            user.setAvatar(userService.getDefaultAvatar());
+            userRepository.save(user);
+
+            // accountService.CreateUseClone(registerUserRequest.getEmail(),
+            // registerUserRequest.getPassword());
 
             String subject = "Email authentication";
             String confirmationUrl = "http://" + request.getServerName() + ":" + request.getServerPort()
-                    + "/api/auth/registration-confirmation?username=" + account.getUsername() + "&password="
-                    + account.getPassword() + "&register_date=" + account.getRegister_date() + "&email="
-                    + account.getEmail();
+                    + "/api/auth/registration-confirmation?username=" + registerUserRequest.getUsername() + "&password="
+                    + registerUserRequest.getPassword() + "&register_date=" + registerUserRequest.getRegister_date()
+                    + "&email="
+                    + registerUserRequest.getEmail();
             // Send the confirmationmail
             try {
-                emailService.sendCustomEmail(account, subject, confirmationUrl);
+                emailService.sendCustomEmail(registerUserRequest, subject, confirmationUrl);
                 return ResponseEntity.ok("Account registered successfully");
             } catch (MessagingException e) {
                 return badRequest().body("Failed to send email for verification");
@@ -103,16 +121,24 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@RequestBody LoginRequestDTO loginRequest) {
         boolean isAuthenticated = accountService.login(loginRequest);
-        String info = loginRequest.getUsername();
-        String role =  userService.getRoleByUsername(info);
+        String userName = loginRequest.getUsername();
+        String role = userService.getRoleByUsername(userName);
         if (isAuthenticated) {
             String accessToken = jwtTokenUtil.generateAccessToken(loginRequest.getUsername());
             String refreshToken = jwtTokenUtil.generateRefreshToken(loginRequest.getUsername());
-            accountService.updateAccessTokenAndRefreshToken(info, accessToken, refreshToken);
+            accountService.updateAccessTokenAndRefreshToken(userName, accessToken, refreshToken);
             return new AuthResponse(accessToken, refreshToken, role);
         } else {
             throw new RuntimeException("Tên đăng nhập hoặc mật khẩu bị sai");
         }
+    }
+
+    @PatchMapping("/updatePass")
+    public ResponseEntity<?> updatePass(@RequestBody updatePassResquest updatePassResquest) {
+        if (accountService.updatePass(updatePassResquest)) {
+            return ResponseEntity.ok("ok");
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
     }
 
     // @PostMapping("/authToken")
@@ -145,11 +171,13 @@ public class AuthController {
                 // Lấy thông tin từ token
                 String username = jwtTokenUtil.getUsernameFromToken(token);
                 IdRoleResponse idRoleResponse = accountService.getIdAccountByUserName(username);
-                int userId = idRoleResponse.getAccount_id();
+                int accountId = idRoleResponse.getAccount_id();
                 String role = idRoleResponse.getRole();
+                int userId = userService.getUserIdByAccountId(accountId);
                 Map<String, Object> response = new HashMap<>();
-                response.put("userId", userId);
+                response.put("accountId", accountId);
                 response.put("role", role);
+                response.put("userId", userId);
                 return ResponseEntity.ok(response);
 
             } catch (Exception e) {
@@ -190,13 +218,11 @@ public class AuthController {
             @RequestParam("password") String password,
             @RequestParam("register_date") String registerDay,
             @RequestParam("email") String email) {
-        if (!accountService.authenticated(email)) {
-            if (accountService.confirmationEmailByPass(email, password)) {
-                accountService.register(username, email);
-                return ResponseEntity.ok("Tài khoản đã được xác thực email");
-            }
+        if (accountService.authenticated(email)) {
+            return ResponseEntity.ok("Tài khoản đã được xác thực email");
         }
-        return ResponseEntity.ok("Account registered unsuccessfully");
+        accountService.confirAccount(email);
+        return ResponseEntity.ok("Xác thực thành công");
     }
 
     @GetMapping("/img/{id}")

@@ -26,6 +26,8 @@ public class Album {
     @Lob
     @Column(name = "img", columnDefinition = "LONGBLOB")
     private byte[] img;
+    private boolean hidden = false;
+
 
     public float getListening_duration() {
         return listening_duration;
@@ -77,6 +79,14 @@ public class Album {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
 }

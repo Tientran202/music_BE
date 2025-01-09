@@ -3,16 +3,20 @@ package com.example.be.dto.response.indexUser;
 public class IndexUserResponse {
     private int user_id;
     private String user_name;
+    private String stage_name;
     private byte[] user_img;
     private Long total_playlist;
     public IndexUserResponse() {
     }
-    public IndexUserResponse(int user_id, String user_name, byte[] user_img, Long total_playlist) {
+  
+    public IndexUserResponse(int user_id, String user_name, String stage_name, byte[] user_img, Long total_playlist) {
         this.user_id = user_id;
         this.user_name = user_name;
+        this.stage_name = stage_name;
         this.user_img = user_img;
         this.total_playlist = total_playlist;
     }
+
     public int getUser_id() {
         return user_id;
     }
@@ -36,6 +40,14 @@ public class IndexUserResponse {
     }
     public void setTotal_playlist(Long total_playlist) {
         this.total_playlist = total_playlist;
+    }
+
+    public String getStage_name() {
+        return stage_name;
+    }
+
+    public void setStage_name(String stage_name) {
+        this.stage_name = stage_name;
     }
     
 }

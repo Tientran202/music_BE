@@ -1,4 +1,4 @@
-package com.example.be.dto.response.AllAlbum;
+package com.example.be.dto.response.allAlbum;
 
 import java.util.Date;
 

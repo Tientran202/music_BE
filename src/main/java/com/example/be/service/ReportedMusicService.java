@@ -9,37 +9,43 @@ import org.springframework.stereotype.Service;
 
 import com.example.be.dto.response.admin.HiddenMusicResponse;
 import com.example.be.dto.response.admin.ReportedMusicResponse;
+import com.example.be.repository.MusicRepository;
 import com.example.be.repository.ReportedMusicRepository;
 
 @Service
 public class ReportedMusicService {
-    @Autowired
-    ReportedMusicRepository reportedMusicRepository;
+        @Autowired
+        ReportedMusicRepository reportedMusicRepository;
 
-    public List<ReportedMusicResponse> getAllRepostedMusic() {
+        @Autowired
+        MusicRepository musicRepository;
 
-        List<Object[]> queryResults = reportedMusicRepository.findAllReportedMuisc();
-        return queryResults.stream()
-                .map(result -> new ReportedMusicResponse(
-                        (String) result[0], // userName
-                        (String) result[1], // iuserIdd
-                        (String) result[2], // reportUserName
-                        (Date) result[3], // reportContent
-                        (String) result[4] // date
-                )).collect(Collectors.toList());
-    }
+        public List<ReportedMusicResponse> getAllRepostedMusic() {
 
-    public List<HiddenMusicResponse> getAllHiddenMusic() {
+                List<Object[]> queryResults = reportedMusicRepository.findAllReportedMuisc();
+                return queryResults.stream()
+                                .map(result -> new ReportedMusicResponse(
+                                                (int) result[0],
+                                                (int) result[1],
+                                                (String) result[2], // userName
+                                                (String) result[3], // iuserIdd
+                                                (String) result[4], // reportUserName
+                                                (Date) result[5], // reportContent
+                                                (String) result[6] // date
+                                )).collect(Collectors.toList());
+        }
 
-        List<Object[]> queryResults = reportedMusicRepository.findAllHiddenMuisc();
-        return queryResults.stream()
-                .map(result -> new HiddenMusicResponse(
-                        (String) result[0], // userName
-                        (String) result[1], // iuserIdd
-                        (String) result[2], // reportUserName
-                        (Date) result[3], // reportContent
-                        (String) result[4], // date
-                        (Date) result[5] // reportContent
-                )).collect(Collectors.toList());
-    }
+        public List<HiddenMusicResponse> getAllHiddenMusic() {
+                List<Object[]> queryResults = musicRepository.findAllHiddenMuisc();
+                return queryResults.stream()
+                                .map(result -> new HiddenMusicResponse(
+                                                (int) result[0],
+                                                (String) result[1], // userName
+                                                (String) result[2], // iuserIdd
+                                                (String) result[3], // reportUserName
+                                                (Date) result[4], // reportContent
+                                                (String) result[5], // date
+                                                (Date) result[6] // reportContent
+                                )).collect(Collectors.toList());
+        }
 }

@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.be.model.Genre;
+import com.example.be.model.Follow;
 
 @Repository
-public interface GenreRepository extends JpaRepository<Genre,Long>{
-    List<Genre> findAll();
-    Genre findById(int genre_id);
+public interface FollowRepository extends JpaRepository<Follow, Long> {
+    
+
+        List<Follow> findByUserId(int userId);
+
 }

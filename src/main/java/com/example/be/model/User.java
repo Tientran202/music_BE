@@ -26,6 +26,8 @@ public class User {
     private boolean request_artist;
     private Date time_request_artist;
     private Date time_debut;
+    private boolean hidden = false;
+
 
     @Lob
     private byte[] avatar;
@@ -126,6 +128,14 @@ public class User {
 
     public void setTime_request_artist(Date time_request_artist) {
         this.time_request_artist = time_request_artist;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
 }

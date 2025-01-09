@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.example.be.dto.request.RegisterUserRequest;
 import com.example.be.model.Account;
 import com.example.be.repository.AccountRepository;
 
@@ -22,24 +23,24 @@ public class EmailService {
 
     public int existByEmailConfirmation(String email) {
         Optional<Account> optionalAccount = accountRepository.findByEmail(email);
-        if(optionalAccount.isPresent()){
-            Account account= optionalAccount.get();
-            boolean confir=account.isConfirmation();
-            if(confir){
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            boolean confir = account.isConfirmation();
+            if (confir) {
                 return 2;
-            }
-            else{
+            } else {
                 return 1;
             }
         }
         return 0;
     }
 
-    public void sendCustomEmail(Account account, String subject, String confirmationUrl) throws MessagingException {
+    public void sendCustomEmail(RegisterUserRequest registerUserRequest, String subject, String confirmationUrl)
+            throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-        helper.setTo(account.getEmail());
+        helper.setTo(registerUserRequest.getEmail());
         helper.setSubject(subject);
 
         String htmlContent = "<!DOCTYPE html>\n" +
@@ -111,11 +112,10 @@ public class EmailService {
                 "\n" +
                 "</html>\n";
 
-        htmlContent = htmlContent.replace("{{username}}", account.getUsername());
+        htmlContent = htmlContent.replace("{{username}}", registerUserRequest.getUsername());
         htmlContent = htmlContent.replace("{{confirmationUrl}}", confirmationUrl);
 
         helper.setText(htmlContent, true);
         javaMailSender.send(message);
-
     }
 }

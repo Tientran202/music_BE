@@ -102,6 +102,16 @@ public class AlbumService {
         return response;
     }
 
+    public List<AlbumByArtistIdResponse> getAlbumByArtistIdlimit(int artistId) {
+        List<Object[]> queryResults = albumRepository.getAlbumByArtistIdlimit(artistId);
+        return queryResults.stream()
+                .map(result -> new AlbumByArtistIdResponse(
+                        (int) result[0], // musicId
+                        (String) result[1], // musicImg
+                        (byte[]) result[2] // genre
+                )).collect(Collectors.toList());
+    }
+
     public List<AlbumByArtistIdResponse> getAlbumByArtistId(int artistId) {
         List<Object[]> queryResults = albumRepository.getAlbumByArtistId(artistId);
         return queryResults.stream()
@@ -112,17 +122,27 @@ public class AlbumService {
                 )).collect(Collectors.toList());
     }
 
+    public Long getNumberOfAlbum(){
+        return albumRepository.getNumberOfAlbum();
+    }
+
     // public List<AllAlbumResponse> getAllAlbum() {
-    //     List<Object[]> queryResults = albumRepository.getAllAlbum();
-    //     return queryResults.stream()
-    //             .map(result -> new AllAlbumResponse(
-    //                     (int) result[0], // musicId
-    //                     (String) result[1], // musicImg
-    //                     (byte[]) result[2], // genre
-    //                     (Date) result[3],
-    //                     (int) result[4], // musicId
-    //                     (String) result[5]// musicImg
-    //             )).collect(Collectors.toList());
+    // List<Object[]> queryResults = albumRepository.getAllAlbum();
+    // return queryResults.stream()
+    // .map(result -> new AllAlbumResponse(
+    // (int) result[0], // musicId
+    // (String) result[1], // musicImg
+    // (byte[]) result[2], // genre
+    // (Date) result[3],
+    // (int) result[4], // musicId
+    // (String) result[5]// musicImg
+    // )).collect(Collectors.toList());
     // }
 
+    // public int createAlbum(String albumName) {
+    // Album album = new Album();
+    // album.setAlbumName(albumName);
+    // album = albumRepository.save(album);
+    // return album.getId();
+    // }
 }
