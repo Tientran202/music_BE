@@ -55,6 +55,17 @@ public class AdminController {
         return reportedMuicService.getAllHiddenMusic();
     }
 
+    @PostMapping("cancelHiddenMusic")
+    public ResponseEntity<String> cancelHiddenMusic(
+            @RequestParam("musicId") int musicId) {
+        try {
+            musicService.cancelHiddenMusic(musicId);
+            return new ResponseEntity<>("Đã bỏ ẩn bài nhạc", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("reportedUser")
     public List<ReportedUserResponse> ReportedUsers() {
         return reportedUserService.getAllRepostedUser();
@@ -80,7 +91,7 @@ public class AdminController {
             @RequestParam("reportId") int reportId) {
         try {
             musicService.hiddenMusic(reportId);
-            return new ResponseEntity<>("Đã ẩn bỏ bài nhạc", HttpStatus.OK);
+            return new ResponseEntity<>("Đã ẩn bài nhạc", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -97,5 +108,4 @@ public class AdminController {
         }
     }
 
-    
 }

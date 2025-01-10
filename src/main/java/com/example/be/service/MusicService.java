@@ -279,6 +279,7 @@ public class MusicService {
                 Optional<ReportMusic> reportMusicOptional = reportedMusicRepository.findById(reportId);
                 ReportMusic reportMusic = reportMusicOptional.get();
                 reportMusic.setHidden(true);
+                reportMusic.setHidden_time();
                 reportedMusicRepository.save(reportMusic);
         }
 
@@ -292,5 +293,14 @@ public class MusicService {
                 music.setHidden(true);
                 musicRepository.save(music);
         }
+
+        public void cancelHiddenMusic(int musicId) {
+                Optional<Music> musicOptional = musicRepository.findById(musicId);
+                Music music = musicOptional.get();
+                music.setHidden(false);
+                musicRepository.save(music);
+        }
+
+        
 
 }

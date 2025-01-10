@@ -48,6 +48,9 @@ public class ReportMusic {
     public void setHidden_time(Date hidden_time) {
         this.hidden_time = hidden_time;
     }
+    public void setHidden_time() {
+        this.hidden_time = new Date();
+    }
 
     public void setDay(Date day) {
         this.day = day;

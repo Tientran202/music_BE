@@ -108,11 +108,12 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
         @Query(value = "SELECT COUNT(*) FROM music ", nativeQuery = true)
         Long getNumberOfMusic();
 
-        @Query(value = " select distinct m.id , m.music_name , u.name , ur.name , rm.day , rm.report_content , rm.hidden_time "+
-                        " from music m " +
-                        " join report_music rm on m.id = rm.music_id " +
-                        " join user u on u.id = m.artist_id " +
-                        " join user ur on ur.id = rm.announcer_id " +
-                        " where m.hidden = true ", nativeQuery = true)
+        @Query(value = " SELECT  m.id , m.music_name, u.name,  ur.name , MAX(rm.day),  GROUP_CONCAT(rm.report_content ) ,  MAX(rm.hidden_time) ,  m.hidden "+
+                        " FROM music m " +
+                        " JOIN  report_music rm ON m.id = rm.music_id " +
+                        " JOIN  user u ON u.id = m.artist_id " +
+                        " JOIN  user ur ON ur.id = rm.announcer_id " +
+                        " WHERE  m.hidden = true " +
+                        " GROUP BY  m.id, m.music_name, u.name, ur.name, m.hidden ", nativeQuery = true)
         List<Object[]> findAllHiddenMuisc();
 }

@@ -62,6 +62,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/admin/getAllHiddenMusic").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/admin/hiddenReportMusic").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/admin/acceptRequestArtist").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/admin/cancelHiddenMusic").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/genre/getGenreAndMusic/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/music/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/music/searchMusic").permitAll()
