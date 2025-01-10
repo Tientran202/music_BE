@@ -1,5 +1,9 @@
 package com.example.be.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -301,6 +305,46 @@ public class MusicService {
                 musicRepository.save(music);
         }
 
-        
+        //
+        public byte[] cutMusic(int musicId, int startSeconds, int endSeconds)
+                        throws IOException, InterruptedException {
+                // 1. Lấy dữ liệu MP3 từ cơ sở dữ liệu
+                Music music = musicRepository.findById(musicId)
+                                .orElseThrow(() -> new RuntimeException("Music not found"));
+
+                // 2. Lưu file MP3 vào hệ thống tạm thời
+                File tempFile = File.createTempFile("tempMusic", ".mp3");
+                FileOutputStream fos = new FileOutputStream(tempFile);
+                fos.write(music.getAudio());
+                fos.close();
+
+                // 3. Cắt file sử dụng ffmpeg
+                File outputFile = new File("cutFile.mp3");
+
+                ProcessBuilder processBuilder = new ProcessBuilder(
+                                "ffmpeg",
+                                "-i", tempFile.getAbsolutePath(),
+                                "-ss", String.valueOf(startSeconds),
+                                "-to", String.valueOf(endSeconds),
+                                "-c", "copy",
+                                outputFile.getAbsolutePath());
+
+                Process process = processBuilder.start();
+                int exitCode = process.waitFor();
+                if (exitCode != 0) {
+                        throw new IOException("Error occurred during file slicing");
+                }
+
+                // 4. Đọc dữ liệu đã cắt
+                FileInputStream fis = new FileInputStream(outputFile);
+                byte[] cutData = fis.readAllBytes();
+                fis.close();
+
+                // 5. Xóa file tạm thời
+                tempFile.delete();
+                outputFile.delete();
+
+                return cutData;
+        }
 
 }

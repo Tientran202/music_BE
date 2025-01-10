@@ -190,7 +190,6 @@ public class MusicController {
 
     @GetMapping("/downloadAudioMusicByMusicId/{musicId}")
     public ResponseEntity<byte[]> downloadSong(@PathVariable Long musicId) {
-        // Lấy bài nhạc theo ID
         Music song = musicRepository.findById(musicId)
                 .orElseThrow(() -> new RuntimeException("Music not found"));
         return ResponseEntity.ok()
@@ -261,9 +260,6 @@ public class MusicController {
         }
     }
 
-    
-
-
     @GetMapping("getAllMusicUnconfirmed")
     public List<AllMusicUnconfirmedResponse> getAllMusicUnconfirmed() {
         return musicService.getAllMusicUnconfirmed();
@@ -307,6 +303,22 @@ public class MusicController {
         return ResponseEntity.ok("repoet successfully");
     }
 
+    //
 
+    // @GetMapping("/cut")
+    // public ResponseEntity<byte[]> cutMusic(@RequestParam int musicId,
+    //         @RequestParam int startSeconds,
+    //         @RequestParam int endSeconds) {
+    //     try {
+    //         byte[] cutAudio = musicService.cutMusic(musicId, startSeconds, endSeconds);
+    //         return ResponseEntity.ok()
+    //                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"cut_music.mp3\"")
+    //                 .contentType(MediaType.parseMediaType("audio/mpeg"))
+    //                 .body(cutAudio); // Trả về âm thanh đã cắt dưới dạng byte[]
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    //                 .body(null);
+    //     }
+    // }
 
 }

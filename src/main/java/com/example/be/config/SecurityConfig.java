@@ -106,6 +106,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/music/addToPlaylist").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/music/reportMusic").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/music/getNumberOfMusic").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/music/cut").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/album/getTopAlbum").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/album/getIndexAlbum/{id}").permitAll()
@@ -120,6 +121,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/follow/followArtist").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/follow/unFlowArtist").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/follow/getFollow").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/story/createStory").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/story/nghe/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/user/profile").authenticated()
                         .anyRequest().authenticated())
                 // .addFilterBefore(new JwtAuthenticationFilter(),
