@@ -123,6 +123,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/follow/getFollow").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/story/createStory").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/story/nghe/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/story/getAllStoryByArtistId").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/story/getIndexStoryByStoryId/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/story/audio/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/user/profile").authenticated()
                         .anyRequest().authenticated())
                 // .addFilterBefore(new JwtAuthenticationFilter(),

@@ -27,11 +27,11 @@ public class ReportedMusicService {
                                 .map(result -> new ReportedMusicResponse(
                                                 (int) result[0],
                                                 (int) result[1],
-                                                (String) result[2], // userName
-                                                (String) result[3], // iuserIdd
-                                                (String) result[4], // reportUserName
-                                                (Date) result[5], // reportContent
-                                                (String) result[6] // date
+                                                (String) result[2], 
+                                                (String) result[3],
+                                                (String) result[4], 
+                                                (Date) result[5], 
+                                                (String) result[6]
                                 )).collect(Collectors.toList());
         }
 
@@ -40,12 +40,12 @@ public class ReportedMusicService {
                 return queryResults.stream()
                                 .map(result -> new HiddenMusicResponse(
                                                 (int) result[0],
-                                                (String) result[1], // userName
-                                                (String) result[2], // iuserIdd
-                                                (String) result[3], // reportUserName
-                                                (Date) result[4], // reportContent
-                                                (String) result[5], // date
-                                                (Date) result[6] // reportContent
+                                                (String) result[1], 
+                                                (String) result[2],
+                                                (String) result[3], 
+                                                (Date) result[4], 
+                                                (String) result[5],
+                                                (Date) result[6]
                                 )).collect(Collectors.toList());
         }
 }

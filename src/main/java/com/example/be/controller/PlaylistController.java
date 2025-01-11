@@ -76,12 +76,7 @@ public class PlaylistController {
     public List<PlaylistByUserIdResponse> getPlaylistByUserIdAddMusic(@RequestParam int userId) {
         return playlistService.getPlaylistByUserIdAddMusic(userId);
     }
-    // @PostMapping("/createPlaylist")
-    // public ResponseEntity<?> createPlaylist(@RequestBody CreatePlaylistRequest
-    // createPlaylistRequest) {
-    // playlistService.createPlaylist(createPlaylistRequest);
-    // return ResponseEntity.ok("them thanh cong");
-    // }
+   
 
     @PostMapping(value = "/createPlaylist", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createPlaylist(
@@ -98,8 +93,7 @@ public class PlaylistController {
             playlist.setUser(user);
             playlist.setPlaylistName(playlistName);
 
-            // Lưu trữ dữ liệu binary (hình ảnh) vào playlist
-            playlist.setImg(image.getBytes()); // Lưu dưới dạng byte[].
+            playlist.setImg(image.getBytes()); 
 
             playlistRepository.save(playlist);
             return ResponseEntity.ok("Playlist created successfully!");

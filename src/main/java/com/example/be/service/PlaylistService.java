@@ -29,7 +29,6 @@ public class PlaylistService {
         private static final int SIMILARITY_THRESHOLD_LOW = 10;
 
         public List<SearchPlaylistResponse> searchPlaylist(String keyword) {
-                // Lấy toàn bộ danh sách bài hát
                 List<Object[]> queryResults = playlistRepository.getSearchPlayList();
                 List<SearchPlaylistResponse> playlists = queryResults.stream()
                                 .map(result -> new SearchPlaylistResponse(
@@ -40,7 +39,6 @@ public class PlaylistService {
                                                 (int) result[4]))
                                 .collect(Collectors.toList());
 
-                // Lọc các bài hát có độ tương đồng trên 80%
                 List<SearchPlaylistResponse> highSimilarityMusics = playlists.stream()
                                 .filter(playlist -> isSimilar(playlist.getPlaylist_name(), keyword,
                                                 SIMILARITY_THRESHOLD_HIGH)) // 80%

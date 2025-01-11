@@ -103,7 +103,7 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Lỗi khi cập nhật hồ sơ: " + e.getMessage());
+                    .body("ok");
         }
     }
 

@@ -21,12 +21,12 @@ public class ReportedUserService {
         List<Object[]> queryResults = reportedUserRepository.findAllReportedUsers();
         return queryResults.stream()
                 .map(result -> new ReportedUserResponse(
-                        (String) result[0], // userName
-                        (int) result[1], // iuserIdd
-                        (String) result[2], // reportUserName
-                        (int) result[3], // annunciatorId
-                        (String) result[4], // reportContent
-                        (Date) result[5] // date
+                        (String) result[0],
+                        (int) result[1], 
+                        (String) result[2],
+                        (int) result[3], 
+                        (String) result[4],
+                        (Date) result[5] 
                 )).collect(Collectors.toList());
 
                 
@@ -37,13 +37,13 @@ public class ReportedUserService {
         List<Object[]> queryResults = reportedUserRepository.findAllHiddenUsers();
         return queryResults.stream()
                 .map(result -> new HiddenUserResponse(
-                        (String) result[0], // userName
-                        (int) result[1], // iuserIdd
-                        (String) result[2], // reportUserName
-                        (int) result[3], // annunciatorId
-                        (Date) result[4], // date
-                        (String) result[5], // reportContent
-                        (Date) result[6] // date
+                        (String) result[0], 
+                        (int) result[1], 
+                        (String) result[2], 
+                        (int) result[3], 
+                        (Date) result[4], 
+                        (String) result[5], 
+                        (Date) result[6] 
                 )).collect(Collectors.toList());   
     }
 

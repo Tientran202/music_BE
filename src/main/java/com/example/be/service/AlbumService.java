@@ -25,20 +25,18 @@ public class AlbumService {
 
     public List<AlbumTopResponse> getTopAlbum() {
         List<Object[]> queryResults = albumRepository.getTopAlbum();
-        // Chuyển đổi dữ liệu từ query result sang DTO
         return queryResults.stream()
                 .map(result -> new AlbumTopResponse(
-                        (int) result[0], // musicId
-                        (String) result[1], // genre
-                        (byte[]) result[2], // musicImg
-                        (Date) result[3], // musicId
-                        (int) result[4], // genre
-                        (String) result[5] // musicImg
+                        (int) result[0],
+                        (String) result[1], 
+                        (byte[]) result[2],
+                        (Date) result[3], 
+                        (int) result[4],
+                        (String) result[5] 
                 )).collect(Collectors.toList());
     }
 
     public List<SearchAlbumResponse> searchAlbum(String keyword) {
-        // Lấy toàn bộ danh sách bài hát
         List<Object[]> queryResults = albumRepository.getSearchAlbum();
         List<SearchAlbumResponse> albums = queryResults.stream()
                 .map(result -> new SearchAlbumResponse(
@@ -50,22 +48,19 @@ public class AlbumService {
                         (String) result[5]))
                 .collect(Collectors.toList());
 
-        // Lọc các bài hát có độ tương đồng trên 80%
         List<SearchAlbumResponse> highSimilarityAlbums = albums.stream()
-                .filter(album -> isSimilar(album.getAlbum_name(), keyword, SIMILARITY_THRESHOLD_HIGH)) // 80%
+                .filter(album -> isSimilar(album.getAlbum_name(), keyword, SIMILARITY_THRESHOLD_HIGH)) 
                 .sorted((m1, m2) -> Integer.compare(similarity(m2.getAlbum_name(), keyword),
-                        similarity(m1.getAlbum_name(), keyword))) // Sắp xếp theo độ tương đồng giảm dần
+                        similarity(m1.getAlbum_name(), keyword))) 
                 .collect(Collectors.toList());
 
-        // Nếu không có kết quả với độ tương đồng trên 80%, tìm kiếm lại với độ tương
-        // đồng trên 10%
         if (highSimilarityAlbums.isEmpty()) {
             highSimilarityAlbums = albums.stream()
-                    .filter(music -> isSimilar(music.getAlbum_name(), keyword, SIMILARITY_THRESHOLD_LOW)) // Kiểm tra độ
-                                                                                                          // tương đồng
-                                                                                                          // trên 10%
+                    .filter(music -> isSimilar(music.getAlbum_name(), keyword, SIMILARITY_THRESHOLD_LOW)) 
+                                                                                                        
+                                                                                                         
                     .sorted((m1, m2) -> Integer.compare(similarity(m2.getAlbum_name(), keyword),
-                            similarity(m1.getAlbum_name(), keyword))) // Sắp xếp theo độ tương đồng giảm dần
+                            similarity(m1.getAlbum_name(), keyword))) 
                     .collect(Collectors.toList());
             if (highSimilarityAlbums.isEmpty()) {
                 return albums;
@@ -75,7 +70,6 @@ public class AlbumService {
     }
 
     private boolean isSimilar(String text, String keyword, int threshold) {
-        // Kiểm tra độ tương đồng với từ khóa có ngưỡng xác định
         return similarity(text, keyword) >= threshold;
     }
 
@@ -126,23 +120,4 @@ public class AlbumService {
         return albumRepository.getNumberOfAlbum();
     }
 
-    // public List<AllAlbumResponse> getAllAlbum() {
-    // List<Object[]> queryResults = albumRepository.getAllAlbum();
-    // return queryResults.stream()
-    // .map(result -> new AllAlbumResponse(
-    // (int) result[0], // musicId
-    // (String) result[1], // musicImg
-    // (byte[]) result[2], // genre
-    // (Date) result[3],
-    // (int) result[4], // musicId
-    // (String) result[5]// musicImg
-    // )).collect(Collectors.toList());
-    // }
-
-    // public int createAlbum(String albumName) {
-    // Album album = new Album();
-    // album.setAlbumName(albumName);
-    // album = albumRepository.save(album);
-    // return album.getId();
-    // }
 }

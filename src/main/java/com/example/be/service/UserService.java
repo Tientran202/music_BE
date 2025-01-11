@@ -138,7 +138,6 @@ public class UserService {
         }
 
         private boolean isSimilar(String text, String keyword, int threshold) {
-                // Kiểm tra độ tương đồng với từ khóa có ngưỡng xác định
                 return similarity(text, keyword) >= threshold;
         }
 
@@ -179,12 +178,11 @@ public class UserService {
         public List<FlowingByUserIdResponse> getFlowingByUserId(int userId) {
                 List<Object[]> queryResults = userRepository.getFllowingByUserId(userId);
 
-                // Chuyển đổi dữ liệu từ query result sang DTO
                 return queryResults.stream()
                                 .map(result -> new FlowingByUserIdResponse(
-                                                (int) result[0], // musicId
-                                                (String) result[1], // genre
-                                                (byte[]) result[2] // musicImg
+                                                (int) result[0], 
+                                                (String) result[1],
+                                                (byte[]) result[2] 
                                 )).collect(Collectors.toList());
         }
 
@@ -202,39 +200,31 @@ public class UserService {
 
         public void updateUserProfile(int userId, String name, String artistName, MultipartFile image)
                         throws Exception {
-                // Tìm user từ cơ sở dữ liệu
                 User user = userRepository.findById(userId)
                                 .orElseThrow(() -> new Exception("Người dùng không tồn tại"));
 
-                // Cập nhật thông tin
                 user.setName(name);
                 user.setStageName(artistName);
 
-                // Nếu có ảnh, chuyển đổi ảnh thành byte[] và lưu
                 if (image != null && !image.isEmpty()) {
                         byte[] avatarBytes = image.getBytes();
                         user.setAvatar(avatarBytes);
                 }
 
-                // Lưu thay đổi vào database
                 userRepository.save(user);
         }
 
         public void updateUserProfileUser(int userId, String name, MultipartFile image)
                         throws Exception {
-                // Tìm user từ cơ sở dữ liệu
                 User user = userRepository.findById(userId)
                                 .orElseThrow(() -> new Exception("Người dùng không tồn tại"));
 
-                // Cập nhật thông tin
                 user.setName(name);
-                // Nếu có ảnh, chuyển đổi ảnh thành byte[] và lưu
                 if (image != null && !image.isEmpty()) {
                         byte[] avatarBytes = image.getBytes();
                         user.setAvatar(avatarBytes);
                 }
 
-                // Lưu thay đổi vào database
                 userRepository.save(user);
         }
 
@@ -242,7 +232,7 @@ public class UserService {
                 try {
                         Path path = Paths.get("./src/main/java/com/example/be/img/user (1).png"); // Đường dẫn đến ảnh
                                                                                                   // mặc định
-                        return Files.readAllBytes(path); // Chuyển ảnh mặc định thành byte[]
+                        return Files.readAllBytes(path); 
                 } catch (IOException e) {
                         throw new RuntimeException("Unable to read default avatar", e);
                 }

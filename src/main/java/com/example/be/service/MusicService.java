@@ -45,14 +45,13 @@ public class MusicService {
         public List<GenreMusicRespone> getMusicByGenreId(int genreId) {
                 List<Object[]> queryResults = musicRepository.findMusicByGenreId(genreId);
 
-                // Chuyển đổi dữ liệu từ query result sang DTO
                 return queryResults.stream()
                                 .map(result -> new GenreMusicRespone(
-                                                (int) result[0], // musicId
-                                                (String) result[1], // genre
-                                                (byte[]) result[2], // musicImg
-                                                (String) result[3], // musicName
-                                                (String) result[4]) // userName
+                                                (int) result[0], 
+                                                (String) result[1], 
+                                                (byte[]) result[2], 
+                                                (String) result[3],
+                                                (String) result[4]) 
                                 ).collect(Collectors.toList());
         }
 
@@ -89,7 +88,6 @@ public class MusicService {
 
         public List<NewMusicResponse> getNewMusic() {
                 List<Object[]> queryResults = musicRepository.getNewMusic();
-                // Chuyển đổi dữ liệu từ query result sang DTO
                 return queryResults.stream()
                                 .map(result -> new NewMusicResponse(
                                                 (int) result[0], // musicId
@@ -99,7 +97,6 @@ public class MusicService {
         }
 
         public List<SearchMusicResponse> searchMusic(String keyword) {
-                // Lấy toàn bộ danh sách bài hát
                 List<Object[]> queryResults = musicRepository.getSearchMusic();
                 List<SearchMusicResponse> musics = queryResults.stream()
                                 .map(result -> new SearchMusicResponse(
@@ -140,7 +137,6 @@ public class MusicService {
         }
 
         private boolean isSimilar(String text, String keyword, int threshold) {
-                // Kiểm tra độ tương đồng với từ khóa có ngưỡng xác định
                 return similarity(text, keyword) >= threshold;
         }
 
@@ -168,7 +164,6 @@ public class MusicService {
 
         public List<MusicByAlbumIdResponse> getMusicByPlaylistId(int playlistId) {
                 List<Object[]> queryResults = musicRepository.getMusicByPlaylistId(playlistId);
-                // Chuyển đổi dữ liệu từ query result sang DTO
                 return queryResults.stream()
                                 .map(result -> new MusicByAlbumIdResponse(
                                                 (int) result[0],
@@ -181,23 +176,21 @@ public class MusicService {
 
         public List<SuggestedMusicResponse> getSuggestedMusicResponse(int artistId) {
                 List<Object[]> queryResults = musicRepository.getSuggestedMusicByArtistId(artistId);
-                // Chuyển đổi dữ liệu từ query result sang DTO
                 return queryResults.stream()
                                 .map(result -> new SuggestedMusicResponse(
-                                                (int) result[0], // musicId
-                                                (String) result[1], // genre
-                                                (byte[]) result[2] // musicImg
+                                                (int) result[0], 
+                                                (String) result[1], 
+                                                (byte[]) result[2] 
                                 )).collect(Collectors.toList());
         }
 
         public List<SuggestedMusicResponse> getSuggestedMusicForAdminResponse(int artistId) {
                 List<Object[]> queryResults = musicRepository.getSuggestedMusicForAdminResponse(artistId);
-                // Chuyển đổi dữ liệu từ query result sang DTO
                 return queryResults.stream()
                                 .map(result -> new SuggestedMusicResponse(
-                                                (int) result[0], // musicId
-                                                (String) result[1], // genre
-                                                (byte[]) result[2] // musicImg
+                                                (int) result[0], 
+                                                (String) result[1], 
+                                                (byte[]) result[2] 
                                 )).collect(Collectors.toList());
         }
 
@@ -205,8 +198,8 @@ public class MusicService {
                 List<Object[]> queryResults = musicRepository.findAllForAlbumByArtistId(artistId);
                 return queryResults.stream()
                                 .map(result -> new Music(
-                                                (int) result[0], // musicId
-                                                (String) result[1] // genre
+                                                (int) result[0], 
+                                                (String) result[1] 
                                 )).collect(Collectors.toList());
         }
 
@@ -220,9 +213,9 @@ public class MusicService {
                 List<Object[]> queryResults = musicRepository.getMusicByArtistId(artistId);
                 return queryResults.stream()
                                 .map(result -> new MusicByArtistIdResponse(
-                                                (int) result[0], // musicId
-                                                (String) result[1], // genre
-                                                (byte[]) result[2] // genre
+                                                (int) result[0], 
+                                                (String) result[1], 
+                                                (byte[]) result[2] 
                                 )).collect(Collectors.toList());
         }
 
@@ -230,11 +223,11 @@ public class MusicService {
                 List<Object[]> queryResults = musicRepository.getAllMusicCByArtistId(artistId);
                 return queryResults.stream()
                                 .map(result -> new MusicByArtistIdResponse(
-                                                (int) result[0], // musicId
-                                                (String) result[1], // genre
-                                                (byte[]) result[2], // genre
-                                                (boolean) result[3], // genre
-                                                (boolean) result[4] // genre
+                                                (int) result[0], 
+                                                (String) result[1], 
+                                                (byte[]) result[2], 
+                                                (boolean) result[3], 
+                                                (boolean) result[4]
                                 )).collect(Collectors.toList());
         }
 
@@ -242,9 +235,9 @@ public class MusicService {
                 List<Object[]> queryResults = musicRepository.getMusicByArtistIdForCreateAlbum(artistId);
                 return queryResults.stream()
                                 .map(result -> new MusicByArtistIdResponse(
-                                                (int) result[0], // musicId
-                                                (String) result[1], // genre
-                                                (byte[]) result[2] // genre
+                                                (int) result[0], 
+                                                (String) result[1], 
+                                                (byte[]) result[2]
                                 )).collect(Collectors.toList());
         }
 
@@ -252,9 +245,9 @@ public class MusicService {
                 List<Object[]> queryResults = musicRepository.getAllMusicByArtistId(artistId);
                 return queryResults.stream()
                                 .map(result -> new MusicByArtistIdResponse(
-                                                (int) result[0], // musicId
-                                                (String) result[1], // genre
-                                                (byte[]) result[2] // genre
+                                                (int) result[0], 
+                                                (String) result[1], 
+                                                (byte[]) result[2] 
                                 )).collect(Collectors.toList());
         }
 
@@ -262,9 +255,9 @@ public class MusicService {
                 List<Object[]> queryResults = musicRepository.getAllMusicUnconfirmed();
                 return queryResults.stream()
                                 .map(result -> new AllMusicUnconfirmedResponse(
-                                                (int) result[0], // musicId
-                                                (String) result[1], // genre
-                                                (String) result[2] // genre
+                                                (int) result[0],
+                                                (String) result[1], 
+                                                (String) result[2] 
                                 )).collect(Collectors.toList());
         }
 
@@ -308,17 +301,14 @@ public class MusicService {
         //
         public byte[] cutMusic(int musicId, int startSeconds, int endSeconds)
                         throws IOException, InterruptedException {
-                // 1. Lấy dữ liệu MP3 từ cơ sở dữ liệu
                 Music music = musicRepository.findById(musicId)
                                 .orElseThrow(() -> new RuntimeException("Music not found"));
 
-                // 2. Lưu file MP3 vào hệ thống tạm thời
                 File tempFile = File.createTempFile("tempMusic", ".mp3");
                 FileOutputStream fos = new FileOutputStream(tempFile);
                 fos.write(music.getAudio());
                 fos.close();
 
-                // 3. Cắt file sử dụng ffmpeg
                 File outputFile = new File("cutFile.mp3");
 
                 ProcessBuilder processBuilder = new ProcessBuilder(
@@ -335,12 +325,10 @@ public class MusicService {
                         throw new IOException("Error occurred during file slicing");
                 }
 
-                // 4. Đọc dữ liệu đã cắt
                 FileInputStream fis = new FileInputStream(outputFile);
                 byte[] cutData = fis.readAllBytes();
                 fis.close();
 
-                // 5. Xóa file tạm thời
                 tempFile.delete();
                 outputFile.delete();
 

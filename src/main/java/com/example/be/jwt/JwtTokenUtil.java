@@ -70,28 +70,23 @@ public class JwtTokenUtil {
         }
     }
 
-    // Kiểm tra xem token có hết hạn hay không
     public boolean isTokenExpired(String token) {
         try {
             Claims claims = extractClaims(token);
             if (claims == null) {
                 System.out.println("Received Refresh Token: " + token);
                 System.err.println("1");
-                return true; // Nếu không có claims thì coi như token hết hạn
+                return true; 
             }
 
-            // Lấy thời gian hết hạn của token
             Date expiration = claims.getExpiration();
 
-            // Kiểm tra nếu expiration nhỏ hơn thời gian hiện tại thì token hết hạn
             return expiration.before(new Date());
         } catch (Exception e) {
-            // Xử lý lỗi nếu có, ví dụ lỗi khi giải mã token
             return true;
         }
     }
 
-    // Giải mã token
     public String extractUsername(String token) {
         @SuppressWarnings("deprecation")
         Claims claims = Jwts.parser()
@@ -101,7 +96,6 @@ public class JwtTokenUtil {
         return claims.getSubject();
     }
 
-    // Lấy thông tin người dùng từ token
     public String getUsernameFromToken(String token) {
         return extractClaims(token).getSubject();
     }
