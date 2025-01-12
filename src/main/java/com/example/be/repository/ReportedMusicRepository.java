@@ -20,7 +20,8 @@ public interface ReportedMusicRepository extends JpaRepository<ReportMusic, Long
                         " join music m on m.id = rm.music_id " +
                         " join user ur on ur.id = m.artist_id " +
                         " join user u on u.id = m.artist_id " +
-                        " where rm.hidden='0' ", nativeQuery = true)
+                        " where rm.hidden='0' "+
+                        "order by rm.day desc", nativeQuery = true)
         List<Object[]> findAllReportedMuisc();
 
         

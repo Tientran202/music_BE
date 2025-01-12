@@ -102,7 +102,8 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
         @Query(value = " select m.id , u.name , m.music_name" +
                         " from music m " +
                         " join user u on u.id = m.artist_id " +
-                        " where m.confirmation = 0", nativeQuery = true)
+                        " where m.confirmation = 0 "+
+                        " order by m.id desc ", nativeQuery = true)
         List<Object[]> getAllMusicUnconfirmed();
 
         @Query(value = "SELECT COUNT(*) FROM music ", nativeQuery = true)

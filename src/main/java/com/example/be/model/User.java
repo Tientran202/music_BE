@@ -129,6 +129,9 @@ public class User {
     public void setTime_request_artist(Date time_request_artist) {
         this.time_request_artist = time_request_artist;
     }
+    public void setTime_request_artist() {
+        this.time_request_artist = new Date();
+    }
 
     public boolean isHidden() {
         return hidden;

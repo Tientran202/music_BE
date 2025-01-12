@@ -72,7 +72,12 @@ public class AuthController {
                 return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.OK);
             }
             int config = emailService.existByEmailConfirmation(registerUserRequest.getEmail());
-           
+            if (config == 2) {
+                return ResponseEntity.badRequest().body("Email tồn tại");
+            }
+            if (config == 1) {
+                return ResponseEntity.badRequest().body("Email đã đăng kí những chưa được xácthực");
+            }
 
             String hashedPassword = passwordEncoder.encode(registerUserRequest.getPassword());
             Account account = new Account();
@@ -88,8 +93,6 @@ public class AuthController {
             user.setAvatar(userService.getDefaultAvatar());
             userRepository.save(user);
 
-           
-
             String subject = "Email authentication";
             String confirmationUrl = "http://" + request.getServerName() + ":" + request.getServerPort()
                     + "/api/auth/registration-confirmation?username=" + registerUserRequest.getUsername() + "&password="
@@ -104,7 +107,9 @@ public class AuthController {
                 return badRequest().body("Failed to send email for verification");
             }
         } catch (Exception e) {
+            // Log lỗi ra console
             e.printStackTrace();
+            // Trả về lỗi với thông tin chi tiết
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error registering account");
         }
     }
@@ -132,19 +137,34 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
     }
 
-   
+    // @PostMapping("/authToken")
+    // public ResponseEntity<?> authToken(@RequestBody TokenRequest token) {
+    // try {
+    // // Kiểm tra access_token có hết hạn không
+    // if (jwtTokenUtil.isTokenExpired(token.getAccess_token())) {
+    // this.refreshToken(token.getRefresh_token());
+    // }
+    // return ResponseEntity.ok(token.getAccess_token());
+    // } catch (Exception e) {
+    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+    // .body("{\"error\": \"invalid_refresh_token\", \"message\": \"Invalid refresh
+    // token.\"}");
+    // }
+    // }
 
     @GetMapping("/check-token")
     public ResponseEntity<?> checkToken(HttpServletRequest request) {
         // Lấy header Authorization
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7); 
+            String token = authorizationHeader.substring(7); // Lấy token sau "Bearer "
             try {
+                // Kiểm tra token hết hạn
                 if (jwtTokenUtil.isTokenExpired(token)) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                             .body("{\"error\": \"access_token_expired\", \"message\": \"Your access token has expired. Please refresh it.\"}");
                 }
+                // Lấy thông tin từ token
                 String username = jwtTokenUtil.getUsernameFromToken(token);
                 IdRoleResponse idRoleResponse = accountService.getIdAccountByUserName(username);
                 int accountId = idRoleResponse.getAccount_id();
@@ -162,6 +182,7 @@ public class AuthController {
             }
         }
 
+        // Trường hợp không có token trong header
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("{\"error\": \"missing_token\", \"message\": \"Authorization token is missing.\"}");
 
@@ -176,9 +197,11 @@ public class AuthController {
                         .body("refresh token hêt han ");
             }
 
+            // Tạo mới access_token
             String username = jwtTokenUtil.getUsernameFromToken(token.getRefresh_token());
             String newAccessToken = jwtTokenUtil.generateAccessToken(username);
             accountService.updateAccessToken(username, newAccessToken);
+            // Trả về token mới
             return ResponseEntity.ok(Collections.singletonMap("access_token", newAccessToken));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

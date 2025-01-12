@@ -17,7 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
         @Query(value = "select u.id ,u.name , u.stage_name , u.time_request_artist " +
                         " from user u " +
-                        " where u.request_artist = 1", nativeQuery = true)
+                        " where u.request_artist = 1" +
+                        " order by u.time_request_artist desc ", nativeQuery = true)
         List<Object[]> findAllRequestToBecomeArtist();
 
         @Query(value = "SELECT u.id AS id, " +

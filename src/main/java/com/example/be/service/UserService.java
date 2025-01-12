@@ -246,6 +246,7 @@ public class UserService {
                 }
                 user.setRequest_artist(true);
                 user.setStageName(stageName);
+                user.setTime_request_artist();
                 userRepository.save(user);
                 return true;
         }
